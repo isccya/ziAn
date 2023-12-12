@@ -4,11 +4,11 @@
 
 <template>
   <div class="h-100%">
-    我要考勤
+    考勤详情
   </div>
 </template>
 
 <route lang="yaml">
 meta:
-  layout: home
+  layout: default
 </route>

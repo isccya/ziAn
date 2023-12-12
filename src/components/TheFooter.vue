@@ -4,7 +4,7 @@
 
 <template>
   <van-tabbar route>
-    <van-tabbar-item replace to="/attendance" icon="home-o">
+    <van-tabbar-item replace to="/" icon="home-o">
       我要考勤
     </van-tabbar-item>
     <van-tabbar-item replace to="/attendanceRecord" icon="home-o">
