@@ -3,8 +3,8 @@
 </script>
 
 <template>
-  <div>
-    首页
+  <div class="h-100%">
+    我要考勤
   </div>
 </template>
 
