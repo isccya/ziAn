@@ -8,6 +8,7 @@ watchEffect(() => {
 
 <template>
   <main text="center">
-    <van-nav-bar title="标题" left-text="返回" left-arrow @click-left="router.back()" />
+    <van-nav-bar :title="title" />
+    <!-- <van-nav-bar title="标题" left-text="返回" left-arrow @click-left="router.back()" /> -->
   </main>
 </template>

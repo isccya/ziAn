@@ -1,6 +1,7 @@
 <template>
-  <main text="center">
+  <main text="center ">
+    <TheHeader />
     <RouterView />
-    <TheFooter />
+    <TheFooter class="fixed"/>
   </main>
 </template>

@@ -4,7 +4,7 @@
   "packageManager": "pnpm@8.11.0",
   "scripts": {
     "build": "vite-ssg build",
-    "dev": "vite --port 3333 --open",
+    "dev": "vite --port 3333  --open --host 0.0.0.0",
     "lint": "eslint .",
     "preview": "vite preview",
     "preview-https": "serve dist",
@@ -70,10 +70,12 @@
     "vite-plugin-vue-devtools": "^1.0.0-rc.6",
     "vite-plugin-vue-layouts": "^0.8.0",
     "vite-plugin-webfont-dl": "^3.9.1",
+    "vite-plugin-windicss": "^1.9.2",
     "vite-ssg": "^0.23.5",
     "vite-ssg-sitemap": "^0.6.1",
     "vitest": "^1.0.0",
-    "vue-tsc": "^1.8.24"
+    "vue-tsc": "^1.8.24",
+    "windicss": "^3.5.6"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
