@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // 检查时间
-const currentDate = ref()
+const checkTime = ref()
 const showTimePicker = ref(false)
 const onConfirmTime = ({ selectedValues }: { selectedValues: any }) => {
-  currentDate.value = selectedValues.join('/');
+  checkTime.value = selectedValues.join('/');
   showTimePicker.value = false;
 }
 
@@ -146,7 +146,7 @@ const onSubmit = ()=>{
   <div class="pb-26" style="background-color: rgb( 247, 248, 250);">
     <van-form class="mx-1" @submit="onSubmit">
       <div class="mt-3 mb-7 shadow border">
-        <van-field v-model="currentDate" is-link readonly name="datePicker" label="检查时间 :" placeholder="请选择"
+        <van-field v-model="checkTime" is-link readonly name="datePicker" label="检查时间 :" placeholder="请选择"
           @click="showTimePicker = true" />
         <van-field v-model="showSection" is-link readonly name="showSection" label="检查节次 :" placeholder="请选择"
           @click="showSectionPicker = true" />
