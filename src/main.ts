@@ -10,7 +10,7 @@ import '@unocss/reset/tailwind.css'
 import './styles/main.css'
 import 'uno.css'
 import 'virtual:windi.css'
-
+import 'vant/es/toast/style/index'
 // const routes = setupLayouts(generatedRoutes)
 
 // https://github.com/antfu/vite-ssg

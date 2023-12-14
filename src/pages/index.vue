@@ -135,11 +135,16 @@ const onConfirmIdentity = ({ selectedValues }: { selectedValues: any }) => {
   showIdentityPicker.value = false;
 }
 
+// 提交表单
+const router = useRouter()
+const onSubmit = ()=>{
+  router.push('/attendanceDetail')
+}
 </script>
 
 <template>
   <div class="pb-26" style="background-color: rgb( 247, 248, 250);">
-    <van-form class="mx-1">
+    <van-form class="mx-1" @submit="onSubmit">
       <div class="mt-3 mb-7 shadow border">
         <van-field v-model="currentDate" is-link readonly name="datePicker" label="检查时间 :" placeholder="请选择"
           @click="showTimePicker = true" />

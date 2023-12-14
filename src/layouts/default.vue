@@ -1,5 +1,5 @@
 <template>
-  <main text="center ">
+  <main text="">
     <TheHeader />
     <RouterView />
     <TheFooter class="fixed"/>

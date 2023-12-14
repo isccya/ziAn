@@ -1,5 +1,5 @@
 <template>
-  <main text="center">
+  <main>
     <TheHeader />
     <RouterView />
     <!-- <TheFooter /> -->
