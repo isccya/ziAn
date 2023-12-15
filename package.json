@@ -22,6 +22,7 @@
     "@unocss/reset": "^0.58.0",
     "@vueuse/core": "^10.6.1",
     "@vueuse/head": "^2.0.0",
+    "js-cookie": "^3.0.5",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
     "vant": "^4.8.0",

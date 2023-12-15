@@ -3,7 +3,7 @@ import { showFailToast } from 'vant'
 import { getToken, removeToken } from './cookies'
 
 const service = axios.create({
-  baseURL: '',
+  baseURL: 'http://49.123.0.26:8984',
   timeout: 10000,
 })
 

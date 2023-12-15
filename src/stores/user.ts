@@ -1,32 +1,33 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { loginByCode, loginByTest } from '~/api/login'
+import { setToken } from '~/utils/cookies'
 
 export const useUserStore = defineStore('user', () => {
-  /**
-   * Current name of the user.
-   */
-  const savedName = ref('')
-  const previousNames = ref(new Set<string>())
-
-  const usedNames = computed(() => Array.from(previousNames.value))
-  const otherNames = computed(() => usedNames.value.filter(name => name !== savedName.value))
-
-  /**
-   * Changes the current name of the user and saves the one that was used
-   * before.
-   *
-   * @param name - new name to set
-   */
-  function setNewName(name: string) {
-    if (savedName.value)
-      previousNames.value.add(savedName.value)
-
-    savedName.value = name
+  const testLogin = async () => {
+    try {
+      const res = await loginByTest()
+      setToken(res.data)
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
+  // 生产环境登录
+  async function login(code: any, path: any, query: any) {
+    if (code === '' && code === null && code === undefined) {
+      // const corpId = 'wx6219dbfa9b86489e';
+      // const redirect_uri = `labor.ticknet.hnust.cn` + path;
+      // window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpId}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`
+    } else {
+      const token: any = (await loginByCode(code)).data;
+      setToken(token);
+    }
+  }
+
+
   return {
-    setNewName,
-    otherNames,
-    savedName,
+    testLogin,
+    login
   }
 })
 
