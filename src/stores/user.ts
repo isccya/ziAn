@@ -1,16 +1,20 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { loginByCode, loginByTest } from '~/api/login'
+import { getUserInfo, loginByCode, loginByTest } from '~/api/login'
 import { setToken } from '~/utils/cookies'
 
 export const useUserStore = defineStore('user', () => {
+  // 模拟登录
   const testLogin = async () => {
     try {
       const res = await loginByTest()
       setToken(res.data)
+      const data = await getUserInfo()
+      console.log(data);
     } catch (error) {
       return Promise.reject(error);
     }
   }
+
 
   // 生产环境登录
   async function login(code: any, path: any, query: any) {
@@ -27,7 +31,7 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     testLogin,
-    login
+    login,
   }
 })
 

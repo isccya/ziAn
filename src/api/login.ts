@@ -8,6 +8,14 @@ export function loginByTest(){
     })
 }
 
+// 获取用户信息
+export function getUserInfo(){
+    return request({
+        url:'',
+        method:'post'
+    })
+}
+
 // 企业微信登录
 export function loginByCode(code : string){
     return request({
