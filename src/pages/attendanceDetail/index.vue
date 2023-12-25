@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { showSuccessToast } from 'vant'
+// 当前时间
+const date = new Date()
+
 // 检查时间
 const currentDate = ref()
 
@@ -110,7 +113,7 @@ const onSubmit = () => {
       </div>
       <div class="mb-7 shadow">
         <van-field v-model="attendancePerson" readonly label="考勤人 :" />
-        <van-field v-model="identity"  readonly name="showIdentity" label="身 份 :"/>
+        <van-field v-model="identity" readonly name="showIdentity" label="身 份 :" />
       </div>
 
       <div class="m-3 flex justify-center">
@@ -125,6 +128,31 @@ const onSubmit = () => {
           </van-button>
         </div>
       </div>
+
+      <div class=" mx-2 shadow">
+        <van-steps direction="vertical" :active="1">
+          <van-step>
+            <!-- <div class="text-green-500">
+            <van-tag mark type="success" size="large">已查阅</van-tag> 2023-11-12 12:30:33
+          </div> -->
+            <div class="flex justify-around">
+              <div>未查阅 </div>
+              <div> 2023-11-17</div>
+              <div> 12 : 33 : 30</div>
+            </div>
+            <!-- <p>2016-07-11 10:00</p> -->
+          </van-step>
+          <van-step>
+            <div class="flex justify-around">
+              <div>已查阅 </div>
+              <div> 2023-11-17</div>
+              <div> 12 : 33 : 30</div>
+            </div>
+          </van-step>
+        </van-steps>
+      </div>
+
+
     </div>
 
   </div>
