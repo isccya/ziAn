@@ -10,7 +10,7 @@ export function addAttendanceRecord(data: any) {
 }
 
 // 获取考勤记录列表
-export function getAttendanceRecord(data: any) {
+export function getAttendanceRecord() {
     return request({
         url: '/check/list',
         method: 'get',

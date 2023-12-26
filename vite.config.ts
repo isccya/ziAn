@@ -20,6 +20,17 @@ import { VantResolver } from '@vant/auto-import-resolver'
 import WindiCSS from 'vite-plugin-windicss'
 
 export default defineConfig({
+  // server: {
+  //   https: false,
+  //   proxy: {
+  //     '/api': { // 配置需要代理的路径 --> 这里的意思是代理http://localhost:80/api/后的所有路由
+  //       target: 'http://49.123.0.26:8984', // 目标地址 --> 服务器地址
+  //       changeOrigin: true, // 允许跨域
+  //   // 重写路径 --> 作用与vue配置pathRewrite作用相同
+  //       rewrite: (path) => path.replace(/^\/api/, "")
+  //     }
+  //    },
+  // },
   resolve: {
     alias: {
       '~/': `${path.resolve(__dirname, 'src')}/`,
@@ -35,7 +46,6 @@ export default defineConfig({
         }),
       },
     }),
-
     // https://github.com/posva/unplugin-vue-router
     VueRouter({
       extensions: ['.vue', '.md'],

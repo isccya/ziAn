@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {showSuccessToast } from 'vant'
-
+import { showSuccessToast } from 'vant'
+import { getAttendanceRecord } from '../../api/attendance'
 const router = useRouter()
-function jumpTo(){
+function jumpTo() {
   router.push('/attendanceDetail')
 }
 
@@ -22,11 +22,20 @@ const majorClass = ref('环境8班')
 // 下拉刷新
 const loading = ref(false)
 const onRefresh = () => {
-      setTimeout(() => {
-        loading.value = false
-        showSuccessToast('刷新成功');
-      }, 1000);
-    };
+  setTimeout(() => {
+    loading.value = false
+    showSuccessToast('刷新成功');
+  }, 1000);
+};
+onMounted(() => {
+  getAttendanceRecord().then((data: any) => {
+    console.log(data);
+
+  }).catch((error) => {
+    console.log(error);
+    
+  })
+})
 </script>
 
 <template>

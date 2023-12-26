@@ -12,6 +12,7 @@ declare module 'vue' {
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheHeader: typeof import('./components/TheHeader.vue')['default']
     VanButton: typeof import('vant/es')['Button']
+    VanCascader: typeof import('vant/es')['Cascader']
     VanCol: typeof import('vant/es')['Col']
     VanDatePicker: typeof import('vant/es')['DatePicker']
     VanDivider: typeof import('vant/es')['Divider']
@@ -28,6 +29,5 @@ declare module 'vue' {
     VanSteps: typeof import('vant/es')['Steps']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
-    VanTag: typeof import('vant/es')['Tag']
   }
 }
