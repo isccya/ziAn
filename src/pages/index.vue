@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import useStore from '../stores'
 const { dict } = useStore();
-const columnsFieldNames = { text: 'dictName', value: 'dictId' }
+const columnsFieldNames = { text: 'dictName', value: 'dictId', children: 'children' }
 
 // 检查时间
 const checkTime = ref()
@@ -18,10 +18,9 @@ const section = ref()
 const showSection = ref()
 const showSectionPicker = ref(false)
 let sections: any = reactive([])
-const onConfirmSection = ({ selectedValues }: { selectedValues: any }) => {
-  console.log(selectedValues);
-  section.value = selectedValues[0];
-  showSection.value = sections[selectedValues[0]].text
+const onConfirmSection = ({ selectedOptions }: { selectedOptions: any }) => {
+  section.value = selectedOptions[0].dictId;
+  showSection.value = selectedOptions[0].dictName
   showSectionPicker.value = false;
 }
 
@@ -30,30 +29,29 @@ const checkplace = ref('')
 const showCheckPlace = ref()
 const showPlacePicker = ref(false)
 const places: any = reactive([])
+// 宿舍区楼栋
 const buildings: any = reactive([])
-const onConfirmPlace = ({ selectedValues }: { selectedValues: any }) => {
-  console.log(selectedValues);
-  checkplace.value = selectedValues[0];
-  showCheckPlace.value = places[selectedValues[0]].text
+const classRoom = ref()
+const onConfirmPlace = ({ selectedOptions }: { selectedOptions: any }) => {
+  checkplace.value = selectedOptions[0].dictName;
+  showCheckPlace.value = selectedOptions[0].dictName
+  classRoom.value = selectedOptions[1]?.dictName
   showPlacePicker.value = false;
 }
-function onChange(value){
-  console.log(value);
-  
+function onChange(value: any) {
+  if (value.selectedOptions[0].dictName.includes('区')) { //如果是宿舍区,添加儿子楼栋
+    value.selectedOptions[0].children = buildings
+  }
 }
-
-// 教室
-const classRoom = ref()
 
 // 检查类型
 const checkType = ref('')
 const showCheckType = ref()
 const showCheckTypePicker = ref(false)
 const types: any = reactive([])
-const onConfirmType = ({ selectedValues }: { selectedValues: any }) => {
-  console.log(selectedValues);
-  checkType.value = selectedValues[0];
-  showCheckType.value = types[selectedValues[0]].text
+const onConfirmType = ({ selectedOptions }: { selectedOptions: any }) => {
+  checkType.value = selectedOptions[0].dictId;
+  showCheckType.value = selectedOptions[0].dictName
   showCheckTypePicker.value = false;
 }
 
@@ -61,31 +59,32 @@ const onConfirmType = ({ selectedValues }: { selectedValues: any }) => {
 const courseName = ref('')
 
 // 有无违纪
-const isDisciplinary = ref('')
-const showIsDisciplinary = ref()
+const isViolate = ref('')
+const showIsViolate = ref()
 const showIsDisciplinaryPicker = ref(false)
 const isDisciplinarys: any = reactive([
-  { text: '有', value: '0' },
-  { text: '无', value: '1' },
+  { text: '有', value: '1' },
+  { text: '无', value: '0' },
 ])
-const onConfirmIsDisciplinary = ({ selectedValues }: { selectedValues: any }) => {
-  console.log(selectedValues);
-  isDisciplinary.value = selectedValues[0];
-  showIsDisciplinary.value = isDisciplinarys[selectedValues[0]].text
+const onConfirmIsDisciplinary = ({ selectedOptions }: { selectedOptions: any }) => {
+  isViolate.value = selectedOptions[0].value;
+  showIsViolate.value = selectedOptions[0].text
   showIsDisciplinaryPicker.value = false;
 }
 const forbid = ref(false)
 watchEffect(() => {
-  if (isDisciplinary.value === '1') {
-    forbid.value = true;
-  } else {
+  if (isViolate.value === '1') { // 有违纪,不禁止
     forbid.value = false;
+  } else if (isViolate.value === '0') {
+    forbid.value = true;
   }
 })
 
 // 违纪人
 const disciplinaryPerson = ref('')
-
+watchEffect(() => {
+    // if()
+})
 // 学号
 const stuNo = ref('')
 
@@ -97,10 +96,9 @@ const disciplinarySituation = ref('')
 const showDisciplinarySituation = ref()
 const showDisciplinarySituationPicker = ref(false)
 const disciplinarySituations: any = reactive([])
-const onConfirmDisciplinarySituation = ({ selectedValues }: { selectedValues: any }) => {
-  console.log(selectedValues);
-  disciplinarySituation.value = selectedValues[0];
-  showDisciplinarySituation.value = disciplinarySituations[selectedValues[0]].text
+const onConfirmDisciplinarySituation = ({ selectedOptions }: { selectedOptions: any }) => {
+  disciplinarySituation.value = selectedOptions[0].dictId;
+  showDisciplinarySituation.value = selectedOptions[0].dictName;
   showDisciplinarySituationPicker.value = false;
 }
 
@@ -154,8 +152,7 @@ onMounted(() => {
               placeholder="请选择" @click="showPlacePicker = true" />
           </van-col>
           <van-col span="12">
-            <van-field v-model="classRoom" is-link readonly name="classRoom" label="教室/宿舍 :" label-width="70px"
-              placeholder="请选择" @click="showTimePicker = true" />
+            <van-field v-model="classRoom" readonly name="classRoom" label="教室/宿舍 :" label-width="70px" />
           </van-col>
         </van-row>
         <van-row>
@@ -170,8 +167,8 @@ onMounted(() => {
       </div>
 
       <div class="mb-7 shadow border">
-        <van-field v-model="showIsDisciplinary" is-link readonly name="showIsDisciplinary" label="有无违纪 :"
-          placeholder="请选择" @click="showIsDisciplinaryPicker = true" />
+        <van-field v-model="showIsViolate" is-link readonly name="showIsDisciplinary" label="有无违纪 :" placeholder="请选择"
+          @click="showIsDisciplinaryPicker = true" />
         <van-row>
           <van-col span="13">
             <van-field v-model="disciplinaryPerson" label="违 纪 人 :" placeholder="请输入学号" :disabled="forbid" />
@@ -222,8 +219,8 @@ onMounted(() => {
     </van-popup> -->
 
     <van-popup v-model:show="showPlacePicker" round position="bottom">
-      <van-cascader v-model="checkplace" title="请选择教学楼/宿舍区" :options="places" @close="showPlacePicker = false" @change="onChange"
-        @finish="onConfirmPlace"  :field-names="columnsFieldNames"/>
+      <van-cascader v-model="checkplace" title="请选择教学楼/宿舍区" :options="places" @close="showPlacePicker = false"
+        @change="onChange" @finish="onConfirmPlace" :field-names="columnsFieldNames" />
     </van-popup>
 
     <!-- 类型 -->
@@ -240,13 +237,13 @@ onMounted(() => {
     <!-- 违纪情况 -->
     <van-popup v-model:show="showDisciplinarySituationPicker" round position="bottom">
       <van-picker :columns="disciplinarySituations" @cancel="showDisciplinarySituationPicker = false"
-        @confirm="onConfirmDisciplinarySituation"  :columns-field-names="columnsFieldNames" />
+        @confirm="onConfirmDisciplinarySituation" :columns-field-names="columnsFieldNames" />
     </van-popup>
 
     <!-- 身份选择 -->
     <van-popup v-model:show="showIdentityPicker" round position="bottom">
-      <van-picker :columns="identitys" @cancel="showIdentityPicker = false" @confirm="onConfirmIdentity"  
-      :columns-field-names="columnsFieldNames" />
+      <van-picker :columns="identitys" @cancel="showIdentityPicker = false" @confirm="onConfirmIdentity"
+        :columns-field-names="columnsFieldNames" />
     </van-popup>
   </div>
 </template>
