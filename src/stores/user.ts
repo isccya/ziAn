@@ -7,9 +7,10 @@ export const useUserStore = defineStore('user', () => {
   const testLogin = async () => {
     try {
       const res = await loginByTest()
+      console.log(res);
       setToken(res.data)
-      const data = await getUserInfo()
-      console.log(data)
+      // const data = await getUserInfo()
+      // console.log(data)
     }
     catch (error) {
       return Promise.reject(error)

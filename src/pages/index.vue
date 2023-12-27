@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import useStore from '../stores'
-const { dict } = useStore();
+import {useDictStore} from '../stores/dict'
+const  dict  = useDictStore();
 const columnsFieldNames = { text: 'dictName', value: 'dictId', children: 'children' }
 
 // 检查时间
