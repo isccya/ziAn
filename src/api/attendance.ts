@@ -36,7 +36,7 @@ export function getDisciplinaryDetail(checkRecordId: number) {
 // 学生是否确认
 export function getConfirm(checkRecordId: number) {
     return request({
-        url: `user/user/check/confirm/${checkRecordId}`,
+        url: `user/check/confirm/${checkRecordId}`,
         method: 'get',
     })
 }
