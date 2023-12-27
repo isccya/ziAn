@@ -3,7 +3,7 @@ import request from '../utils/request'
 // 新增考勤记录
 export function addAttendanceRecord(data: any) {
     return request({
-        url: '/check/add',
+        url: 'user/check/add',
         method: 'post',
         data,
     })
@@ -12,7 +12,7 @@ export function addAttendanceRecord(data: any) {
 // 获取考勤记录列表
 export function getAttendanceRecord() {
     return request({
-        url: '/check/list',
+        url: 'user/check/list',
         method: 'get',
     })
 }
@@ -20,7 +20,7 @@ export function getAttendanceRecord() {
 // 获取考勤详情
 export function getAttendanceDetail(checkRecordId: number) {
     return request({
-        url: `/check/details/${checkRecordId}`,
+        url: `user/check/details/${checkRecordId}`,
         method: 'get',
     })
 }
@@ -28,7 +28,7 @@ export function getAttendanceDetail(checkRecordId: number) {
 // 查看违纪详情
 export function getDisciplinaryDetail(checkRecordId: number) {
     return request({
-        url: `/check/violate/${checkRecordId}`,
+        url: `user/check/violate/${checkRecordId}`,
         method: 'get',
     })
 }
@@ -36,7 +36,7 @@ export function getDisciplinaryDetail(checkRecordId: number) {
 // 学生是否确认
 export function getConfirm(checkRecordId: number) {
     return request({
-        url: `/user/check/confirm/${checkRecordId}`,
+        url: `user/user/check/confirm/${checkRecordId}`,
         method: 'get',
     })
 }

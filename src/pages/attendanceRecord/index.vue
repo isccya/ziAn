@@ -2,8 +2,13 @@
 import { showSuccessToast } from 'vant'
 import { getAttendanceRecord } from '../../api/attendance'
 const router = useRouter()
-function jumpTo() {
-  router.push('/attendanceDetail')
+function jumpTo(checkRecordId: number) {
+  router.push({
+     path: `/attendanceDetail`,
+     query:{
+      checkRecordId,
+     }
+ })
 }
 
 const checkList: any = reactive([])
@@ -39,17 +44,18 @@ onMounted(() => {
 <template>
   <van-pull-refresh v-model="loading" @refresh="onRefresh">
     <div class="h-100% ">
-      <div v-for="items in checkList" class="shadow mx-1 mt-6 py-1 flex" @click="jumpTo">
-        <van-image round width="6rem" height="6rem" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" />
+      <div v-for="items in checkList" class="shadow mx-1 mt-6 py-1 flex" @click="jumpTo(items.checkRecordId)">
+        <van-image round width="6rem" height="6rem" src="../../../public/female.png"  v-if="false"/>
+      <van-image round width="6rem" height="6rem" src="../../../public/male.png" v-if="true"/>
         <div class="ml-5">
           <div>检查类型 : {{ items.checkTypeName }}</div>
           <div v-if="isViolate">
             <div class=" text-red-500 font-bold">有违纪</div>
             <div class="w-60 flex justify-between">
               <div>{{ items.violationName }}</div>
-              <div>{{  items.violationId  }}</div>
-              <div>{{ items.violationClass }}</div> 
-              </div>
+              <div>{{ items.violationId }}</div>
+              <div>{{ items.violationClass }}</div>
+            </div>
           </div>
           <div v-else class="text-green-500 font-bold">
             无违纪
