@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getUserById } from '~/api/attendance';
 import {useDictStore} from '../stores/dict'
 const  dict  = useDictStore();
 const columnsFieldNames = { text: 'dictName', value: 'dictId', children: 'children' }
@@ -82,9 +83,14 @@ watchEffect(() => {
 
 // 违纪人
 const disciplinaryPerson = ref('')
-watchEffect(() => {
-    // if()
-})
+// watchEffect(() => {
+//     if(disciplinaryPerson.value.length)
+// })
+function queryUserInfo(){
+  getUserById(disciplinaryPerson.value).then((res)=>{
+    console.log(res.data);
+  })
+}
 // 学号
 const stuNo = ref('')
 
@@ -127,6 +133,8 @@ const router = useRouter()
 const onSubmit = () => {
   router.push('/attendanceDetail')
 }
+
+
 onMounted(() => {
   // 获取字典
   dict.getCheckSection(sections)
@@ -171,7 +179,7 @@ onMounted(() => {
           @click="showIsDisciplinaryPicker = true" />
         <van-row>
           <van-col span="13">
-            <van-field v-model="disciplinaryPerson" label="违 纪 人 :" placeholder="请输入学号" :disabled="forbid" />
+            <van-field v-model="disciplinaryPerson" label="违 纪 人 :" placeholder="请输入学号" :disabled="forbid" @blur="queryUserInfo"/>
           </van-col>
           <van-col span="11">
             <van-field v-model="stuNo" label="学 号 :" label-width="40px" :disabled="forbid" />

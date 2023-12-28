@@ -11,8 +11,8 @@ export function loginByTest() {
 // 获取用户信息
 export function getUserInfo() {
   return request({
-    url: '',
-    method: 'post',
+    url: '/user/message',
+    method: 'get',
   })
 }
 

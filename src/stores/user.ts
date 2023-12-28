@@ -1,16 +1,27 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { getUserInfo, loginByCode, loginByTest } from '~/api/login'
-import { setToken } from '~/utils/cookies'
+import { setSex, setToken, setUserId, setUserName } from '~/utils/cookies'
 
 export const useUserStore = defineStore('user', () => {
+
+  const sex: any = ref('')
+  const userId = ref('')
+  const userName = ref('')
   // 模拟登录
   const testLogin = async () => {
     try {
       const res = await loginByTest()
       console.log(res);
       setToken(res.data)
-      // const data = await getUserInfo()
-      // console.log(data)
+      let userInfo: any = (await getUserInfo()).data;
+      ({
+        sex: sex.value,
+        userId: userId.value,
+        userName: userName.value
+      } = userInfo)
+      setSex(sex.value)
+      setUserId(userId.value)
+      setUserName(userName.value)
     }
     catch (error) {
       return Promise.reject(error)
@@ -33,6 +44,9 @@ export const useUserStore = defineStore('user', () => {
   return {
     testLogin,
     login,
+    sex,
+    userId,
+    userName
   }
 })
 

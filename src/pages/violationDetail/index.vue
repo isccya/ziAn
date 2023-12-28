@@ -12,7 +12,7 @@ const violationId = ref('')
 const violationName = ref('')
 const violationTypeName = ref('')
 
-function formatYearMonthDay(date) {
+function formatYearMonthDay(date :any) {
     if (!(date instanceof Date)) {
         throw new Error("传递的参数不是有效的 Date 对象");
     }

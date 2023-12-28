@@ -41,14 +41,13 @@ export function getConfirm(checkRecordId: number) {
     })
 }
 
-// 获取身份信息
-export function getUserInfo() {
+// 获取违纪人身份信息
+export function getUserById(userId :string) {
     return request({
         url: `/user/search`,
         method: 'get',
-        params:{
-            page:1,
-            pageSize:1
+        params: {
+            userId,
         }
     })
 }
