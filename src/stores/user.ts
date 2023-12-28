@@ -7,6 +7,70 @@ export const useUserStore = defineStore('user', () => {
   const sex: any = ref('')
   const userId = ref('')
   const userName = ref('')
+  let checkForm = reactive({
+    checkTime: '',
+    checkSection: '',
+    checkType: '',
+    checkLocation: '',
+    checkBuilding: '',
+    isCourse: '',
+    courseName: '',
+    isViolate: '',
+    remark: '',
+    violationId: '',
+    checkerIdentity: '',
+    violationType: ''
+  })
+  function clearCheckForm() {
+    checkForm = reactive({
+      checkTime: '',
+      checkSection: '',
+      checkType: '',
+      checkLocation: '',
+      checkbuilding: '',
+      isCourse: '',
+      courseName: '',
+      isViolate: '',
+      remark: '',
+      violationId: '',
+      checkerIdentity: '',
+      violationType: ''
+    })
+  }
+  let showForm = reactive({
+    checkTime: '',
+    checkSection: '',
+    checkType: '',
+    courseName: '',
+    checkLocation: '',
+    checkBuilding: '',
+    isCourse: '',
+    isViolate: '',
+    violationId: '',
+    disciplinaryPerson: '',
+    majorClass: '',
+    remark: '',
+    violationType: '',
+    checkerIdentity: '',
+  })
+  function clearShowForm(){
+    showForm = reactive({
+      checkTime: '',
+      checkSection: '',
+      checkType: '',
+      courseName: '',
+      checkLocation: '',
+      checkBuilding: '',
+      isCourse: '',
+      isViolate: '',
+      violationId: '',
+      disciplinaryPerson: '',
+      majorClass: '',
+      remark: '',
+      violationType: '',
+      checkerIdentity: '',
+    })
+  }
   // 模拟登录
   const testLogin = async () => {
     try {
@@ -46,7 +110,11 @@ export const useUserStore = defineStore('user', () => {
     login,
     sex,
     userId,
-    userName
+    userName,
+    checkForm,
+    showForm,
+    clearShowForm,
+    clearCheckForm
   }
 })
 

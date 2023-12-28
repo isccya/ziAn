@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { showSuccessToast } from 'vant'
-import { getAttendanceDetail } from '~/api/attendance';
-
+import { showFailToast, showSuccessToast } from 'vant'
+import { addAttendanceRecord, getAttendanceDetail } from '~/api/attendance';
+import { getSex, getUserName } from '~/utils/cookies';
+import { useUserStore } from '~/stores/user';
+const user = useUserStore()
 const route = useRoute()
 const checkRecordId: any = route.query.checkRecordId
 
-
-// 当前时间
-const date = new Date()
+const forbid = false
 
 // 检查时间
 const currentDate: any = ref()
@@ -16,7 +16,7 @@ const currentDate: any = ref()
 const section = ref()
 
 // 检查地点
-let checkPlace = ref()
+const checkPlace = ref()
 
 // 检查教室
 const classRoom = ref()
@@ -47,12 +47,20 @@ const disciplinarySituation = ref('')
 const other = ref('')
 
 // 考勤人
-const attendancePerson = ref('')
+const attendancePerson = ref(getUserName())
 
+// 性别
+const sex: any = getSex()
+function judgeSex() {
+  if (sex === '男')
+    return true
+  else
+    return false
+}
 // 身份
 const identity = ref('')
 
-let record: any = reactive({
+let checkForm: any = reactive({
   checkLocation: '',
   checkSection: '',
   checkTime: '',
@@ -65,6 +73,7 @@ let record: any = reactive({
   violationName: '',
   violationTypeName: ''
 })
+let showForm = reactive({})
 
 
 const router = useRouter()
@@ -72,10 +81,22 @@ const onModify = () => {
   router.back()
 }
 const onSubmit = () => {
-  showSuccessToast('提交成功')
-  router.push('/')
+  console.log(checkForm);
+  addAttendanceRecord(checkForm).then((res: any) => {
+    if (res.code === 200) {
+      user.clearShowForm()
+      user.clearCheckForm()
+      showSuccessToast('提交成功')
+      router.push('/attendanceRecord')
+    } else {
+      showFailToast({
+        message: res.description
+      })
+    }
+  })
 }
 onMounted(() => {
+  // 如果是查看详情则请求数据
   if (checkRecordId) {
     getAttendanceDetail(checkRecordId).then((res: any) => {
       ({
@@ -83,17 +104,36 @@ onMounted(() => {
         checkSectionName: section.value,
         checkTime: currentDate.value,
         checkTypeName: checkType.value,
-        courseName:courseName.value,
-        isViolate:isDisciplinary.value,
-        remark:other.value,
-        violationClass:majorClass.value,
-        violationId:stuNo.value,
-        violationName:disciplinaryPerson.value,
-        violationTypeName:disciplinarySituation.value
+        courseName: courseName.value,
+        isViolate: isDisciplinary.value,
+        remark: other.value,
+        violationClass: majorClass.value,
+        violationId: stuNo.value,
+        violationName: disciplinaryPerson.value,
+        violationTypeName: disciplinarySituation.value
       } = res.data)
       // record = reactive({ ...res.data })
     })
   }
+  checkForm = user.checkForm;
+  console.log(checkForm);
+
+  ({
+    checkTime: currentDate.value,
+    checkSection: section.value,
+    checkLocation: checkPlace.value,
+    checkBuilding: classRoom.value,
+    checkType: checkType.value,
+    courseName: courseName.value,
+    isViolate: isDisciplinary.value,
+    violationType: disciplinarySituation.value,
+    violationId: stuNo.value,
+    remark: other.value,
+    majorClass: majorClass.value,
+    checkerIdentity: identity.value,
+    disciplinaryPerson: disciplinaryPerson.value,
+  } = user.showForm)
+
 })
 </script>
 
@@ -106,11 +146,11 @@ onMounted(() => {
     </div>
 
     <div class="shadow flex items-center text-xl h-30">
-      <van-image round width="6rem" height="6rem" src="../../../public/female.png"  v-if="false"/>
-      <van-image round width="6rem" height="6rem" src="../../../public/male.png" v-if="true"/>
+      <van-image round width="6rem" height="6rem" src="../../../public/female.png" v-if="!judgeSex()" />
+      <van-image round width="6rem" height="6rem" src="../../../public/male.png" v-if="judgeSex()" />
       <div class="pl-3">
-        <div>考勤人:ccccc</div>
-        <div>身 &nbsp; 份 :xxxxx</div>
+        <div>考勤人:{{ attendancePerson }}</div>
+        <div>身 &nbsp; 份 :{{ identity }}</div>
       </div>
     </div>
 
@@ -140,7 +180,7 @@ onMounted(() => {
         <van-field v-model="isDisciplinary" readonly name="showIsDisciplinary" label="有无违纪 :" />
         <van-row>
           <van-col span="13">
-            <van-field v-model="disciplinaryPerson" readonly label="违 纪 人 :" placeholder="请输入学号" :disabled="forbid" />
+            <van-field v-model="disciplinaryPerson" readonly label="违 纪 人 :" :disabled="forbid" />
           </van-col>
           <van-col span="11">
             <van-field v-model="stuNo" label="学 号 :" readonly label-width="40px" :disabled="forbid" />
@@ -190,10 +230,7 @@ onMounted(() => {
           </van-step>
         </van-steps>
       </div>
-
-
     </div>
-
   </div>
 </template>
 

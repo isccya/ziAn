@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { getUserById } from '~/api/attendance';
-import {useDictStore} from '../stores/dict'
-const  dict  = useDictStore();
+import { useDictStore } from '../stores/dict'
+import { useUserStore } from '../stores/user'
+import { showFailToast } from 'vant';
+import { getUserName } from '~/utils/cookies';
+const dict = useDictStore();
+const user = useUserStore();
 const columnsFieldNames = { text: 'dictName', value: 'dictId', children: 'children' }
 
 // 检查时间
@@ -32,11 +36,14 @@ const showPlacePicker = ref(false)
 const places: any = reactive([])
 // 宿舍区楼栋
 const buildings: any = reactive([])
-const classRoom = ref()
+const checkBuilding = ref()
+const showCheckBuilding = ref()
 const onConfirmPlace = ({ selectedOptions }: { selectedOptions: any }) => {
-  checkplace.value = selectedOptions[0].dictName;
+  checkplace.value = selectedOptions[0].dictId;
   showCheckPlace.value = selectedOptions[0].dictName
-  classRoom.value = selectedOptions[1]?.dictName
+  console.log(selectedOptions);
+  showCheckBuilding.value = selectedOptions[1]?.dictName
+  checkBuilding.value = selectedOptions[1]?.dictId
   showPlacePicker.value = false;
 }
 function onChange(value: any) {
@@ -46,18 +53,26 @@ function onChange(value: any) {
 }
 
 // 检查类型
-const checkType = ref('')
+const checkType = ref()
 const showCheckType = ref()
 const showCheckTypePicker = ref(false)
 const types: any = reactive([])
+const isCourse: any = ref('0') // 是否为课堂考勤.
+// 课程名称
+const courseName = ref('')
 const onConfirmType = ({ selectedOptions }: { selectedOptions: any }) => {
   checkType.value = selectedOptions[0].dictId;
+  if (checkType.value === 38) {
+    isCourse.value = 1
+  } else {
+    isCourse.value = 0
+    courseName.value = ''
+  }
   showCheckType.value = selectedOptions[0].dictName
   showCheckTypePicker.value = false;
 }
 
-// 课程名称
-const courseName = ref('')
+
 
 // 有无违纪
 const isViolate = ref('')
@@ -72,30 +87,53 @@ const onConfirmIsDisciplinary = ({ selectedOptions }: { selectedOptions: any }) 
   showIsViolate.value = selectedOptions[0].text
   showIsDisciplinaryPicker.value = false;
 }
-const forbid = ref(false)
+const forbid: any = ref(false)
 watchEffect(() => {
   if (isViolate.value === '1') { // 有违纪,不禁止
     forbid.value = false;
   } else if (isViolate.value === '0') {
+    // 没有违纪,清空信息并禁止
+    disciplinaryPerson.value = ''
+    stuNo.value = ''
+    majorClass.value = ''
+    disciplinarySituation.value = ''
+    showDisciplinarySituation.value = ''
+    other.value = ''
     forbid.value = true;
   }
 })
 
 // 违纪人
 const disciplinaryPerson = ref('')
+// 学号
+const stuNo = ref('')
+// 专业班级
+const majorClass = ref('')
+
+const forbidById: any = ref(true)
 // watchEffect(() => {
 //     if(disciplinaryPerson.value.length)
 // })
-function queryUserInfo(){
-  getUserById(disciplinaryPerson.value).then((res)=>{
-    console.log(res.data);
+function queryUserInfo() {
+  getUserById(disciplinaryPerson.value).then((res: any) => {
+    if (res.code === 200) {
+      const data = res.data
+      forbidById.value = false
+      disciplinaryPerson.value = data.userName
+      stuNo.value = data.userId
+      majorClass.value = data.className
+    } else {
+      forbidById.value = true
+      disciplinaryPerson.value = ''
+      stuNo.value = ''
+      majorClass.value = ''
+      showFailToast({
+        message: '请在违纪人输入正确学号'
+      })
+    }
   })
 }
-// 学号
-const stuNo = ref('')
 
-// 专业班级
-const majorClass = ref('')
 
 // 违纪情况
 const disciplinarySituation = ref('')
@@ -109,29 +147,62 @@ const onConfirmDisciplinarySituation = ({ selectedOptions }: { selectedOptions: 
 }
 
 
-
 // 备注
 const other = ref('')
 
 // 考勤人
-const attendancePerson = ref('')
+const attendancePerson = ref(getUserName())
 
 // 身份
 const identity = ref('')
 const showIdentity = ref()
 const showIdentityPicker = ref(false)
 const identitys: any = reactive([])
-const onConfirmIdentity = ({ selectedValues }: { selectedValues: any }) => {
-  console.log(selectedValues);
-  identity.value = selectedValues[0];
-  showIdentity.value = identitys[selectedValues[0]].text
+const onConfirmIdentity = ({ selectedOptions }: { selectedOptions: any }) => {
+  identity.value = selectedOptions[0].dictId;
+  showIdentity.value = selectedOptions[0].dictName
   showIdentityPicker.value = false;
 }
 
 // 提交表单
+
 const router = useRouter()
 const onSubmit = () => {
-  router.push('/attendanceDetail')
+  const checkForm = reactive({
+    checkTime: checkTime.value,
+    checkSection: section.value,
+    checkType: checkType.value,
+    checkLocation: checkplace.value,
+    checkBuilding: checkBuilding.value,
+    isCourse: isCourse.value,
+    courseName: courseName.value,
+    isViolate: isViolate.value,
+    remark: other.value,
+    violationId: stuNo.value,
+    checkerIdentity: identity.value,
+    violationType: disciplinarySituation.value
+  });
+  const showForm = reactive({
+    checkTime: checkTime.value,
+    checkSection: showSection.value,
+    checkType: showCheckType.value,
+    courseName: courseName.value,
+    checkLocation: showCheckPlace.value,
+    checkBuilding: showCheckBuilding.value,
+    isCourse: isCourse.value,
+    isViolate: showIsViolate.value,
+    violationId: stuNo.value,
+    disciplinaryPerson: disciplinaryPerson.value,
+    majorClass: majorClass.value,
+    remark: other.value,
+    violationType: showDisciplinarySituation.value,
+    checkerIdentity: showIdentity.value,
+  })
+  user.checkForm = checkForm //将数据存到vuex
+  user.showForm = showForm
+  router.push({
+    path: '/attendanceDetail',
+  })
 }
 
 
@@ -142,7 +213,42 @@ onMounted(() => {
   dict.getArea(places)
   dict.getBuilding(buildings)
   dict.getViolation(disciplinarySituations)
-  dict.getIdentity(identitys)
+  dict.getIdentity(identitys);
+
+  // 如果修改跳回的话则要重新获取数据
+  ({
+    checkTime: checkTime.value,
+    checkSection: section.value,
+    checkType: checkType.value,
+    checkLocation: checkplace.value,
+    checkBuilding: checkBuilding.value,
+    isCourse: isCourse.value,
+    courseName: courseName.value,
+    isViolate: isViolate.value,
+    remark: other.value,
+    violationId: stuNo.value,
+    checkerIdentity: identity.value,
+    violationType: disciplinarySituation.value
+  } = user.checkForm);
+  ({
+    checkTime: checkTime.value,
+    checkSection: showSection.value,
+    checkType: showCheckType.value,
+    courseName: courseName.value,
+    checkLocation: showCheckPlace.value,
+    checkBuilding: showCheckBuilding.value,
+    isCourse: isCourse.value,
+    isViolate: showIsViolate.value,
+    violationId: stuNo.value,
+    disciplinaryPerson: disciplinaryPerson.value,
+    majorClass: majorClass.value,
+    remark: other.value,
+    violationType: showDisciplinarySituation.value,
+    checkerIdentity: showIdentity.value,
+  } = user.showForm)
+  if (stuNo.value) {
+    forbidById.value = false
+  }
 })
 </script>
 
@@ -160,7 +266,8 @@ onMounted(() => {
               placeholder="请选择" @click="showPlacePicker = true" />
           </van-col>
           <van-col span="12">
-            <van-field v-model="classRoom" readonly name="classRoom" label="教室/宿舍 :" label-width="70px" />
+            <van-field v-model="showCheckBuilding" readonly name="showClassRoom" label="宿舍楼栋 :" label-width="70px"
+              :disabled="false" />
           </van-col>
         </van-row>
         <van-row>
@@ -169,7 +276,8 @@ onMounted(() => {
               placeholder="请选择" @click="showCheckTypePicker = true" />
           </van-col>
           <van-col span="12">
-            <van-field v-model="courseName" label="课程名称 :" label-width="70px" placeholder="请输入" label-align="left" />
+            <van-field v-model="courseName" label="课程名称 :" label-width="70px" placeholder="请输入" label-align="left"
+              :disabled="!isCourse" />
           </van-col>
         </van-row>
       </div>
@@ -179,13 +287,14 @@ onMounted(() => {
           @click="showIsDisciplinaryPicker = true" />
         <van-row>
           <van-col span="13">
-            <van-field v-model="disciplinaryPerson" label="违 纪 人 :" placeholder="请输入学号" :disabled="forbid" @blur="queryUserInfo"/>
+            <van-field v-model="disciplinaryPerson" label="违 纪 人 :" placeholder="请输入学号" :disabled="forbid"
+              @blur="queryUserInfo" />
           </van-col>
           <van-col span="11">
-            <van-field v-model="stuNo" label="学 号 :" label-width="40px" :disabled="forbid" />
+            <van-field v-model="stuNo" label="学 号 :" label-width="40px" :disabled="forbid || forbidById" readonly />
           </van-col>
         </van-row>
-        <van-field v-model="majorClass" label="专业班级 :" :disabled="forbid" />
+        <van-field v-model="majorClass" label="专业班级 :" :disabled="forbid || forbidById" readonly />
       </div>
 
       <div class="mb-7 shadow border">
@@ -227,19 +336,20 @@ onMounted(() => {
     </van-popup> -->
 
     <van-popup v-model:show="showPlacePicker" round position="bottom">
-      <van-cascader v-model="checkplace" title="请选择教学楼/宿舍区" :options="places" @close="showPlacePicker = false"
+      <van-cascader v-model="checkplace" title="请选择宿舍楼栋" :options="places" @close="showPlacePicker = false"
         @change="onChange" @finish="onConfirmPlace" :field-names="columnsFieldNames" />
     </van-popup>
 
     <!-- 类型 -->
     <van-popup v-model:show="showCheckTypePicker" round position="bottom">
-      <van-picker :columns="types" @cancel="showCheckType = false" @confirm="onConfirmType"
+      <van-picker :columns="types" @cancel="showCheckTypePicker = false" @confirm="onConfirmType"
         :columns-field-names="columnsFieldNames" />
     </van-popup>
 
     <!-- 有无违纪 -->
     <van-popup v-model:show="showIsDisciplinaryPicker" round position="bottom">
-      <van-picker :columns="isDisciplinarys" @cancel="showCheckType = false" @confirm="onConfirmIsDisciplinary" />
+      <van-picker :columns="isDisciplinarys" @cancel="showIsDisciplinaryPicker = false"
+        @confirm="onConfirmIsDisciplinary" />
     </van-popup>
 
     <!-- 违纪情况 -->
