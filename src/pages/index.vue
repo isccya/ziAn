@@ -214,7 +214,6 @@ onMounted(() => {
   dict.getBuilding(buildings)
   dict.getViolation(disciplinarySituations)
   dict.getIdentity(identitys);
-
   // 如果修改跳回的话则要重新获取数据
   ({
     checkTime: checkTime.value,

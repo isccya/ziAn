@@ -22,20 +22,7 @@ export const useUserStore = defineStore('user', () => {
     violationType: ''
   })
   function clearCheckForm() {
-    checkForm = reactive({
-      checkTime: '',
-      checkSection: '',
-      checkType: '',
-      checkLocation: '',
-      checkbuilding: '',
-      isCourse: '',
-      courseName: '',
-      isViolate: '',
-      remark: '',
-      violationId: '',
-      checkerIdentity: '',
-      violationType: ''
-    })
+    
   }
   let showForm = reactive({
     checkTime: '',
@@ -53,7 +40,7 @@ export const useUserStore = defineStore('user', () => {
     violationType: '',
     checkerIdentity: '',
   })
-  function clearShowForm(){
+  function clearShowForm() {
     showForm = reactive({
       checkTime: '',
       checkSection: '',

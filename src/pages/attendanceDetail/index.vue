@@ -19,7 +19,7 @@ const section = ref()
 const checkPlace = ref()
 
 // 检查教室
-const classRoom = ref()
+const checkBuildingName = ref()
 
 // 检查类型
 const checkType = ref('')
@@ -73,7 +73,40 @@ let checkForm: any = reactive({
   violationName: '',
   violationTypeName: ''
 })
-let showForm = reactive({})
+
+// 清空vuex
+function clearForm() {
+  user.showForm = reactive({
+    checkTime: '',
+    checkSection: '',
+    checkType: '',
+    courseName: '',
+    checkLocation: '',
+    checkBuilding: '',
+    isCourse: '',
+    isViolate: '',
+    violationId: '',
+    disciplinaryPerson: '',
+    majorClass: '',
+    remark: '',
+    violationType: '',
+    checkerIdentity: '',
+  })
+  user.checkForm = reactive({
+    checkTime: '',
+    checkSection: '',
+    checkType: '',
+    checkLocation: '',
+    checkBuilding: '',
+    isCourse: '',
+    courseName: '',
+    isViolate: '',
+    remark: '',
+    violationId: '',
+    checkerIdentity: '',
+    violationType: ''
+  })
+}
 
 
 const router = useRouter()
@@ -81,11 +114,10 @@ const onModify = () => {
   router.back()
 }
 const onSubmit = () => {
-  console.log(checkForm);
   addAttendanceRecord(checkForm).then((res: any) => {
     if (res.code === 200) {
-      user.clearShowForm()
-      user.clearCheckForm()
+      clearForm()
+      console.log(user.checkForm);
       showSuccessToast('提交成功')
       router.push('/attendanceRecord')
     } else {
@@ -100,7 +132,8 @@ onMounted(() => {
   if (checkRecordId) {
     getAttendanceDetail(checkRecordId).then((res: any) => {
       ({
-        checkLocation: checkPlace.value,
+        checkLocationName: checkPlace.value,
+        checkBuildingName: checkBuildingName.value,
         checkSectionName: section.value,
         checkTime: currentDate.value,
         checkTypeName: checkType.value,
@@ -115,14 +148,14 @@ onMounted(() => {
       // record = reactive({ ...res.data })
     })
   }
-  checkForm = user.checkForm;
-  console.log(checkForm);
 
+
+  checkForm = user.checkForm;
   ({
     checkTime: currentDate.value,
     checkSection: section.value,
     checkLocation: checkPlace.value,
-    checkBuilding: classRoom.value,
+    checkBuilding: checkBuildingName.value,
     checkType: checkType.value,
     courseName: courseName.value,
     isViolate: isDisciplinary.value,
@@ -133,7 +166,6 @@ onMounted(() => {
     checkerIdentity: identity.value,
     disciplinaryPerson: disciplinaryPerson.value,
   } = user.showForm)
-
 })
 </script>
 
@@ -163,7 +195,7 @@ onMounted(() => {
             <van-field v-model="checkPlace" readonly name="showCheckPlace" label="检查地点 :" label-width="70px" />
           </van-col>
           <van-col span="12">
-            <van-field v-model="classRoom" readonly name="classRoom" label="教室/宿舍 :" label-width="70px" />
+            <van-field v-model="checkBuildingName" readonly name="classRoom" label="教室/宿舍 :" label-width="70px" />
           </van-col>
         </van-row>
         <van-row>
@@ -195,7 +227,6 @@ onMounted(() => {
       </div>
       <div class="mb-7 shadow">
         <van-field v-model="attendancePerson" readonly label="考勤人 :" />
-        <van-field v-model="identity" readonly name="showIdentity" label="身 份 :" />
       </div>
 
       <div class="m-3 flex justify-center" v-if="!checkRecordId">

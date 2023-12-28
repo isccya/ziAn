@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import { getDisciplinaryDetail, getConfirm } from '../../api/attendance'
 const route = useRoute()
 const checkRecordId: any = route.query.checkRecordId ?? 11
-
 const checkSection = ref('')
 const checkTime = ref('')
 const checkTypeName = ref('')
