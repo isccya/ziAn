@@ -297,7 +297,7 @@ onMounted(() => {
       </div>
 
       <div class="mb-7 shadow border">
-        <van-field v-model="showDisciplinarySituation" is-link readonly name="showDisciplinarySituation" label="违纪情况 :"
+        <van-field v-model="showDisciplinarySituation" is-link readonly name="showDisciplinarySituation" label="违纪类型 :"
           placeholder="请选择" :disabled="forbid" @click="showDisciplinarySituationPicker = true" />
         <van-field v-model="other" label="备 注 :" placeholder="请输入需要说明的事项" :disabled="forbid" />
       </div>

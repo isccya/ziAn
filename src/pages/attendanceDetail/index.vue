@@ -28,7 +28,17 @@ const checkType = ref('')
 const courseName = ref('')
 
 // 有无违纪
-const isDisciplinary = ref('')
+const isDisciplinary: any = ref('')
+const isViolate: any = ref()
+function judgeIsDisciplinary() {
+  if (isDisciplinary.value === 1) {
+     return '有' 
+    }
+  else return '无'
+}
+watchEffect(()=>{
+  isViolate.value = judgeIsDisciplinary()
+})
 
 // 违纪人
 const disciplinaryPerson = ref('')
@@ -130,21 +140,27 @@ onMounted(() => {
   // 如果是查看详情则请求数据
   if (checkRecordId) {
     getAttendanceDetail(checkRecordId).then((res: any) => {
-      ({
-        checkLocationName: checkPlace.value,
-        checkBuildingName: checkBuildingName.value,
-        checkSectionName: section.value,
-        checkTime: currentDate.value,
-        checkTypeName: checkType.value,
-        courseName: courseName.value,
-        isViolate: isDisciplinary.value,
-        remark: other.value,
-        violationClass: majorClass.value,
-        violationId: stuNo.value,
-        violationName: disciplinaryPerson.value,
-        violationTypeName: disciplinarySituation.value
-      } = res.data)
-      // record = reactive({ ...res.data })
+      if (res.code === 200) {
+        ({
+          checkLocationName: checkPlace.value,
+          checkBuildingName: checkBuildingName.value,
+          checkSectionName: section.value,
+          checkTime: currentDate.value,
+          checkTypeName: checkType.value,
+          courseName: courseName.value,
+          isViolate: isDisciplinary.value,
+          remark: other.value,
+          violationClass: majorClass.value,
+          violationId: stuNo.value,
+          violationName: disciplinaryPerson.value,
+          violationTypeName: disciplinarySituation.value,
+          checkerIdentityName: identity.value
+        } = res.data)
+      } else {
+        showFailToast({
+          message: res.description
+        })
+      }
     })
     getConfirm(checkRecordId).then((res) => {
       const data = res.data
@@ -214,7 +230,7 @@ onMounted(() => {
       </div>
 
       <div class=" shadow">
-        <van-field v-model="isDisciplinary" readonly name="showIsDisciplinary" label="有无违纪 :" />
+        <van-field v-model="isViolate" readonly name="showIsDisciplinary" label="有无违纪 :" />
         <van-row>
           <van-col span="13">
             <van-field v-model="disciplinaryPerson" readonly label="违 纪 人 :" :disabled="forbid" />
@@ -247,7 +263,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class=" mx-2 shadow" v-if="checkRecordId">
+      <div class=" mx-2 shadow" v-if="checkRecordId && isDisciplinary">
         <van-steps direction="vertical" :active="judgeActive()">
           <van-step>
             <!-- <div class="text-green-500">
