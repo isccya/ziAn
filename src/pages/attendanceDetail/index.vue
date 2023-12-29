@@ -60,19 +60,7 @@ function judgeSex() {
 // 身份
 const identity = ref('')
 
-let checkForm: any = reactive({
-  checkLocation: '',
-  checkSection: '',
-  checkTime: '',
-  checktypeName: '',
-  courseName: '',
-  isViolate: '',
-  remark: '',
-  violationClass: '',
-  violationId: '',
-  violationName: '',
-  violationTypeName: ''
-})
+let checkForm: any = reactive({})
 
 // 清空vuex
 function clearForm() {
@@ -165,7 +153,7 @@ onMounted(() => {
     })
   }
 
-
+  // 新提交的数据从vuex中获取,一个展示对象,一个提交对象
   checkForm = user.checkForm;
   ({
     checkTime: currentDate.value,
@@ -183,6 +171,7 @@ onMounted(() => {
     disciplinaryPerson: disciplinaryPerson.value,
   } = user.showForm)
 })
+
 </script>
 
 <template>
@@ -258,7 +247,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class=" mx-2 shadow">
+      <div class=" mx-2 shadow" v-if="checkRecordId">
         <van-steps direction="vertical" :active="judgeActive()">
           <van-step>
             <!-- <div class="text-green-500">

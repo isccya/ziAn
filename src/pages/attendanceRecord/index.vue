@@ -4,35 +4,35 @@ import { getAttendanceRecord } from '../../api/attendance'
 const router = useRouter()
 function jumpTo(checkRecordId: number) {
   router.push({
-     path: `/attendanceDetail`,
-     query:{
+    path: `/attendanceDetail`,
+    query: {
       checkRecordId,
-     }
- })
+    }
+  })
 }
 
 const checkList: any = reactive([])
 
-// 有无违纪
-const isViolate = ref(true)
-
 // 下拉刷新
-const loading = ref(false)
+const fresh = ref(false)
+const loading = ref(true)
 const onRefresh = () => {
-  setTimeout(() => {
-    queryAttendanceRecord()
-    loading.value = false
-    showSuccessToast('刷新成功');
-  }, 1000);
+    queryAttendanceRecord().then(()=>{
+      fresh.value = false
+      showSuccessToast('刷新成功');
+    })
 };
 
 function queryAttendanceRecord() {
-  getAttendanceRecord().then((res: any) => {
-    checkList.length = 0
-    checkList.push(...res.data)
-    loading.value = false
-  }).catch((error) => {
-    console.log(error);
+  return new Promise<void>((resolve, reject) => {
+    getAttendanceRecord().then((res: any) => {
+      checkList.length = 0
+      checkList.push(...res.data)
+      loading.value = false
+      resolve()
+    }).catch((error) => {
+      console.log(error);
+    })
   })
 }
 onMounted(() => {
@@ -42,14 +42,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <van-pull-refresh v-model="loading" @refresh="onRefresh">
+  <van-pull-refresh v-model="fresh" @refresh="onRefresh">
+    <div class="flex justify-center mt-10" v-if="loading">
+      <van-loading type="spinner" />
+    </div>
     <div class="h-100% ">
       <div v-for="items in checkList" class="shadow mx-1 mt-6 py-1 flex" @click="jumpTo(items.checkRecordId)">
-        <van-image round width="6rem" height="6rem" src="../../../public/female.png"  v-if="false"/>
-      <van-image round width="6rem" height="6rem" src="../../../public/male.png" v-if="true"/>
+        <van-image round width="6rem" height="6rem" src="../../../public/female.png" v-if="false" />
+        <van-image round width="6rem" height="6rem" src="../../../public/male.png" v-if="true" />
         <div class="ml-5">
           <div>检查类型 : {{ items.checkTypeName }}</div>
-          <div v-if="isViolate">
+          <div v-if="items.isViolate">
             <div class=" text-red-500 font-bold">有违纪</div>
             <div class="w-60 flex justify-between">
               <div>{{ items.violationName }}</div>
