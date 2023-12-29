@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { showFailToast, showSuccessToast } from 'vant'
-import { addAttendanceRecord, getAttendanceDetail } from '~/api/attendance';
+import { addAttendanceRecord, getAttendanceDetail, getConfirm } from '~/api/attendance';
 import { getSex, getUserName } from '~/utils/cookies';
 import { useUserStore } from '~/stores/user';
 const user = useUserStore()
@@ -108,6 +108,17 @@ function clearForm() {
   })
 }
 
+// 学生是否确认
+const confirm = ref(false)
+
+const confirmTime = ref('')
+function judgeActive() {
+  if (confirm.value === true) {
+    confirmTime.value = new Date(confirmTime.value).toLocaleString()
+    return 1
+  }
+  else return 0
+}
 
 const router = useRouter()
 const onModify = () => {
@@ -146,6 +157,11 @@ onMounted(() => {
         violationTypeName: disciplinarySituation.value
       } = res.data)
       // record = reactive({ ...res.data })
+    })
+    getConfirm(checkRecordId).then((res) => {
+      const data = res.data
+      confirm.value = data.confirm
+      confirmTime.value = data.confirmTime
     })
   }
 
@@ -243,7 +259,7 @@ onMounted(() => {
       </div>
 
       <div class=" mx-2 shadow">
-        <van-steps direction="vertical" :active="0">
+        <van-steps direction="vertical" :active="judgeActive()">
           <van-step>
             <!-- <div class="text-green-500">
             <van-tag mark type="success" size="large">已查阅</van-tag> 2023-11-12 12:30:33
@@ -252,11 +268,10 @@ onMounted(() => {
               <div class="text-lg">暂未查阅 </div>
             </div>
           </van-step>
-          <van-step v-if="false">
+          <van-step v-if="confirm">
             <div class="flex justify-around text-lg">
               <div>已查阅 </div>
-              <div> 2023-11-17</div>
-              <div> 12 : 33 : 30</div>
+              <div> {{ confirmTime }}</div>
             </div>
           </van-step>
         </van-steps>
