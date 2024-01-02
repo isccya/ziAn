@@ -17,9 +17,7 @@ const section = ref()
 
 // 检查地点
 const checkPlace = ref()
-
-// 检查教室
-const checkBuildingName = ref()
+const checkRoom = ref()
 
 // 检查类型
 const checkType = ref('')
@@ -32,11 +30,13 @@ const isDisciplinary: any = ref('')
 const isViolate: any = ref()
 function judgeIsDisciplinary() {
   if (isDisciplinary.value === 1) {
-     return '有' 
-    }
-  else return '无'
+    return '有'
+  }
+  else if (isDisciplinary.value === 0) {
+    return '无'
+  }
 }
-watchEffect(()=>{
+watchEffect(() => {
   isViolate.value = judgeIsDisciplinary()
 })
 
@@ -80,7 +80,7 @@ function clearForm() {
     checkType: '',
     courseName: '',
     checkLocation: '',
-    checkBuilding: '',
+    checkRoom: '',
     isCourse: '',
     isViolate: '',
     violationId: '',
@@ -96,6 +96,7 @@ function clearForm() {
     checkType: '',
     checkLocation: '',
     checkBuilding: '',
+    checkRoom: '',
     isCourse: '',
     courseName: '',
     isViolate: '',
@@ -141,21 +142,22 @@ onMounted(() => {
   if (checkRecordId) {
     getAttendanceDetail(checkRecordId).then((res: any) => {
       if (res.code === 200) {
-        ({
-          checkLocationName: checkPlace.value,
-          checkBuildingName: checkBuildingName.value,
-          checkSectionName: section.value,
-          checkTime: currentDate.value,
-          checkTypeName: checkType.value,
-          courseName: courseName.value,
-          isViolate: isDisciplinary.value,
-          remark: other.value,
-          violationClass: majorClass.value,
-          violationId: stuNo.value,
-          violationName: disciplinaryPerson.value,
-          violationTypeName: disciplinarySituation.value,
-          checkerIdentityName: identity.value
-        } = res.data)
+        const data: any = res.data;
+          ({
+            checkRoom: checkRoom.value,
+            checkSectionName: section.value,
+            checkTime: currentDate.value,
+            checkTypeName: checkType.value,
+            courseName: courseName.value,
+            isViolate: isDisciplinary.value,
+            remark: other.value,
+            violationClass: majorClass.value,
+            violationId: stuNo.value,
+            violationName: disciplinaryPerson.value,
+            violationTypeName: disciplinarySituation.value,
+            checkerIdentityName: identity.value
+          } = data)
+        checkPlace.value = data.checkLocationName + res.data.checkBuildingName
       } else {
         showFailToast({
           message: res.description
@@ -175,10 +177,10 @@ onMounted(() => {
     checkTime: currentDate.value,
     checkSection: section.value,
     checkLocation: checkPlace.value,
-    checkBuilding: checkBuildingName.value,
+    checkRoom: checkRoom.value,
     checkType: checkType.value,
     courseName: courseName.value,
-    isViolate: isDisciplinary.value,
+    isViolate: isViolate.value,
     violationType: disciplinarySituation.value,
     violationId: stuNo.value,
     remark: other.value,
@@ -216,7 +218,7 @@ onMounted(() => {
             <van-field v-model="checkPlace" readonly name="showCheckPlace" label="检查地点 :" label-width="70px" />
           </van-col>
           <van-col span="12">
-            <van-field v-model="checkBuildingName" readonly name="classRoom" label="教室/宿舍 :" label-width="70px" />
+            <van-field v-model="checkRoom" readonly name="classRoom" label="教室/宿舍 :" label-width="70px" />
           </van-col>
         </van-row>
         <van-row>

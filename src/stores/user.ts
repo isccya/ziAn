@@ -12,7 +12,8 @@ export const useUserStore = defineStore('user', () => {
     checkSection: '',
     checkType: '',
     checkLocation: '',
-    checkBuilding: '',
+    checkBuilding:'',
+    checkRoom:'',
     isCourse: '',
     courseName: '',
     isViolate: '',
@@ -21,16 +22,13 @@ export const useUserStore = defineStore('user', () => {
     checkerIdentity: '',
     violationType: ''
   })
-  function clearCheckForm() {
-    
-  }
   let showForm = reactive({
     checkTime: '',
     checkSection: '',
     checkType: '',
     courseName: '',
     checkLocation: '',
-    checkBuilding: '',
+    checkRoom:'',
     isCourse: '',
     isViolate: '',
     violationId: '',
@@ -40,24 +38,7 @@ export const useUserStore = defineStore('user', () => {
     violationType: '',
     checkerIdentity: '',
   })
-  function clearShowForm() {
-    showForm = reactive({
-      checkTime: '',
-      checkSection: '',
-      checkType: '',
-      courseName: '',
-      checkLocation: '',
-      checkBuilding: '',
-      isCourse: '',
-      isViolate: '',
-      violationId: '',
-      disciplinaryPerson: '',
-      majorClass: '',
-      remark: '',
-      violationType: '',
-      checkerIdentity: '',
-    })
-  }
+ 
   // 模拟登录
   const testLogin = async () => {
     try {
@@ -100,8 +81,6 @@ export const useUserStore = defineStore('user', () => {
     userName,
     checkForm,
     showForm,
-    clearShowForm,
-    clearCheckForm
   }
 })
 

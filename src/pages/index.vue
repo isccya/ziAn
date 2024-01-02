@@ -30,19 +30,16 @@ const onConfirmSection = ({ selectedOptions }: { selectedOptions: any }) => {
 }
 
 // 检查地点
-const checkplace = ref('')
+const checkPlace = ref('')
+const checkBuilding = ref()
 const showCheckPlace = ref()
 const showPlacePicker = ref(false)
 const places: any = reactive([])
 // 宿舍区楼栋
 const buildings: any = reactive([])
-const checkBuilding = ref()
-const showCheckBuilding = ref()
 const onConfirmPlace = ({ selectedOptions }: { selectedOptions: any }) => {
-  checkplace.value = selectedOptions[0].dictId;
-  showCheckPlace.value = selectedOptions[0].dictName
-  console.log(selectedOptions);
-  showCheckBuilding.value = selectedOptions[1]?.dictName
+  showCheckPlace.value = selectedOptions[0].dictName + selectedOptions[1]?.dictName
+  checkPlace.value = selectedOptions[0].dictId;
   checkBuilding.value = selectedOptions[1]?.dictId
   showPlacePicker.value = false;
 }
@@ -51,6 +48,9 @@ function onChange(value: any) {
     value.selectedOptions[0].children = buildings
   }
 }
+
+// 教室/宿舍
+const checkRoom = ref('')
 
 // 检查类型
 const checkType = ref()
@@ -172,8 +172,9 @@ const onSubmit = () => {
     checkTime: checkTime.value,
     checkSection: section.value,
     checkType: checkType.value,
-    checkLocation: checkplace.value,
+    checkLocation: checkPlace.value,
     checkBuilding: checkBuilding.value,
+    checkRoom:checkRoom.value,
     isCourse: isCourse.value,
     courseName: courseName.value,
     isViolate: isViolate.value,
@@ -188,7 +189,7 @@ const onSubmit = () => {
     checkType: showCheckType.value,
     courseName: courseName.value,
     checkLocation: showCheckPlace.value,
-    checkBuilding: showCheckBuilding.value,
+    checkRoom : checkRoom.value,
     isCourse: isCourse.value,
     isViolate: showIsViolate.value,
     violationId: stuNo.value,
@@ -219,8 +220,9 @@ onMounted(() => {
     checkTime: checkTime.value,
     checkSection: section.value,
     checkType: checkType.value,
-    checkLocation: checkplace.value,
-    checkBuilding: checkBuilding.value,
+    checkLocation: checkPlace.value,
+    checkBuilding:checkBuilding.value,
+    checkRoom:checkRoom.value,
     isCourse: isCourse.value,
     courseName: courseName.value,
     isViolate: isViolate.value,
@@ -235,7 +237,7 @@ onMounted(() => {
     checkType: showCheckType.value,
     courseName: courseName.value,
     checkLocation: showCheckPlace.value,
-    checkBuilding: showCheckBuilding.value,
+    checkRoom:checkRoom.value,
     isCourse: isCourse.value,
     isViolate: showIsViolate.value,
     violationId: stuNo.value,
@@ -265,8 +267,7 @@ onMounted(() => {
               placeholder="请选择" @click="showPlacePicker = true" />
           </van-col>
           <van-col span="12">
-            <van-field v-model="showCheckBuilding" readonly name="showClassRoom" label="宿舍楼栋 :" label-width="70px"
-              :disabled="false" />
+            <van-field v-model="checkRoom"  name="showClassRoom" label="教室/宿舍 :" label-width="70px" />
           </van-col>
         </van-row>
         <van-row>
@@ -335,7 +336,7 @@ onMounted(() => {
     </van-popup> -->
 
     <van-popup v-model:show="showPlacePicker" round position="bottom">
-      <van-cascader v-model="checkplace" title="请选择宿舍楼栋" :options="places" @close="showPlacePicker = false"
+      <van-cascader v-model="checkPlace" title="请选择检查地点" :options="places" @close="showPlacePicker = false"
         @change="onChange" @finish="onConfirmPlace" :field-names="columnsFieldNames" />
     </van-popup>
 
